@@ -1,0 +1,139 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <memory> // For smart pointers
+
+// Base class
+class Animal {
+public:
+    // Constructor
+    Animal(const std::string& name) : name_(name) {}
+
+    // Virtual function for polymorphism
+    virtual void makeSound() const {
+        std::cout << name_ << " makes a generic sound." << std::endl;
+    }
+
+    // Pure virtual function (makes Animal an abstract class)
+    virtual void eat() const = 0;
+
+    // Getter for name
+    const std::string& getName() const {
+        return name_;
+    }
+
+    // Virtual destructor
+    virtual ~Animal() {
+        std::cout << "Animal destructor called for " << name_ << std::endl;
+    }
+
+protected:
+    std::string name_;
+};
+
+// Derived class: Dog
+class Dog : public Animal {
+public:
+    // Constructor
+    Dog(const std::string& name, const std::string& breed) : Animal(name), breed_(breed) {}
+
+    // Override makeSound
+    void makeSound() const override {
+        std::cout << name_ << " the " << breed_ << " barks loudly!" << std::endl;
+    }
+
+    // Implement pure virtual function eat
+    void eat() const override {
+        std::cout << name_ << " eats kibble." << std::endl;
+    }
+
+    // Specific method for Dog
+    void fetch() const {
+        std::cout << name_ << " fetches the ball." << std::endl;
+    }
+
+    // Destructor
+    ~Dog() override {
+        std::cout << "Dog destructor called for " << name_ << std::endl;
+    }
+
+private:
+    std::string breed_;
+};
+
+// Derived class: Cat
+class Cat : public Animal {
+public:
+    // Constructor
+    Cat(const std::string& name, int lives) : Animal(name), lives_(lives) {}
+
+    // Override makeSound
+    void makeSound() const override {
+        std::cout << name_ << " the cat meows softly." << std::endl;
+    }
+
+    // Implement pure virtual function eat
+    void eat() const override {
+        std::cout << name_ << " eats tuna." << std::endl;
+    }
+
+    // Specific method for Cat
+    void purr() const {
+        std::cout << name_ << " purrs contentedly." << std::endl;
+    }
+
+    // Destructor
+    ~Cat() override {
+        std::cout << "Cat destructor called for " << name_ << std::endl;
+    }
+
+private:
+    int lives_;
+};
+
+// Function demonstrating polymorphism
+void interactWithAnimal(const Animal& animal) {
+    animal.makeSound();
+    animal.eat();
+    std::cout << std::endl;
+}
+
+int main() {
+    std::cout << "--- Demonstrating Classes and Inheritance ---" << std::endl;
+
+    // Create objects of derived classes
+    Dog myDog("Buddy", "Golden Retriever");
+    Cat myCat("Whiskers", 9);
+
+    myDog.makeSound();
+    myDog.eat();
+    myDog.fetch();
+    std::cout << std::endl;
+
+    myCat.makeSound();
+    myCat.eat();
+    myCat.purr();
+    std::cout << std::endl;
+
+    std::cout << "--- Demonstrating Polymorphism ---" << std::endl;
+
+    // Using base class pointers/references to interact with derived objects
+    interactWithAnimal(myDog);
+    interactWithAnimal(myCat);
+
+    // Using smart pointers for managing memory
+    std::cout << "--- Demonstrating Smart Pointers and Vector ---" << std::endl;
+    std::vector<std::unique_ptr<Animal>> pets;
+    pets.push_back(std::make_unique<Dog>("Max", "Labrador"));
+    pets.push_back(std::make_unique<Cat>("Mittens", 7));
+    pets.push_back(std::make_unique<Dog>("Rocky", "Bulldog"));
+
+    for (const auto& pet : pets) {
+        pet->makeSound();
+        pet->eat();
+    }
+
+    std::cout << "--- Program End ---" << std::endl;
+
+    return 0;
+}
